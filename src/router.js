@@ -1,4 +1,5 @@
 import express from "express";
+import authorsRouter from "./routes/authors.js";
 import { getBooksHandler, getBookByIdHandler } from "./controllers/books.js";
 
 const router = express.Router();
@@ -84,5 +85,6 @@ router.get("/books", getBooksHandler);
  */
 
 router.get("/books/:id", getBookByIdHandler);
+router.use(authorsRouter);
 
 export default router;

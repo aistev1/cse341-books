@@ -1,4 +1,7 @@
 import app from './app.js';
+import booksRoutes from "./src/routes/books.js";
+import { connectToDb } from "./src/db/connect.js";
+
 
 const PORT = process.env.PORT;
 
@@ -9,6 +12,17 @@ if (!PORT) {
 app.listen(PORT, () => {
     console.log(`Server listening at 127.0.0.1:${PORT}`);
 });
+
+connectToDb()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server listening at http://localhost:${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Failed to connect to MongoDB:", error);
+    process.exit(1);
+  });
 
 // import app from './app.js';
 

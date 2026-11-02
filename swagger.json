@@ -15,61 +15,65 @@
     "/books": {
       "get": {
         "summary": "Get all books",
-        "description": "Retrieve a list of all books.",
         "tags": [
           "Books"
         ],
         "responses": {
           "200": {
-            "description": "Books retrieved successfully.",
+            "description": "Books retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "properties": {
-                      "_id": {
-                        "type": "string",
-                        "example": "67123456789abcdef0123456"
-                      },
-                      "title": {
-                        "type": "string",
-                        "example": "The Great Gatsby"
-                      },
-                      "author": {
-                        "type": "string",
-                        "example": "F. Scott Fitzgerald"
-                      }
-                    }
+                    "$ref": "#/components/schemas/Book"
                   }
                 }
               }
             }
           },
           "500": {
-            "description": "Internal server error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Internal server error"
-                    }
-                  }
-                }
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a book",
+        "tags": [
+          "Books"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Book"
+              },
+              "example": {
+                "id": "b1",
+                "authorId": "a1",
+                "title": "Pride and Prejudice",
+                "publicationDate": "1813-01-28"
               }
             }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Book created successfully"
+          },
+          "400": {
+            "description": "Invalid input, duplicate ID, or invalid author reference"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
     },
     "/books/{id}": {
       "get": {
-        "summary": "Get a book by ID",
-        "description": "Retrieve a single book using its ID.",
+        "summary": "Get a book by custom ID",
         "tags": [
           "Books"
         ],
@@ -78,46 +82,117 @@
             "in": "path",
             "name": "id",
             "required": true,
-            "description": "The ID of the book to retrieve.",
             "schema": {
               "type": "string"
             },
-            "example": "67123456789abcdef0123456"
+            "example": "b1"
           }
         ],
         "responses": {
           "200": {
-            "description": "Book retrieved successfully.",
+            "description": "Book retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "_id": {
-                      "type": "string",
-                      "example": "67123456789abcdef0123456"
-                    },
-                    "title": {
-                      "type": "string",
-                      "example": "The Great Gatsby"
-                    },
-                    "author": {
-                      "type": "string",
-                      "example": "F. Scott Fitzgerald"
-                    }
-                  }
+                  "$ref": "#/components/schemas/Book"
                 }
               }
             }
           },
-          "400": {
-            "description": "Invalid book ID."
-          },
           "404": {
-            "description": "Book not found."
+            "description": "Book not found"
           },
           "500": {
-            "description": "Internal server error."
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a book",
+        "tags": [
+          "Books"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "b1"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "authorId",
+                  "title",
+                  "publicationDate"
+                ],
+                "properties": {
+                  "authorId": {
+                    "type": "string",
+                    "example": "a1"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Updated Book Title"
+                  },
+                  "publicationDate": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2026-02-20"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Book updated successfully"
+          },
+          "400": {
+            "description": "Invalid input or author reference"
+          },
+          "404": {
+            "description": "Book not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a book",
+        "tags": [
+          "Books"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "b1"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Book deleted successfully"
+          },
+          "404": {
+            "description": "Book not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -306,6 +381,34 @@
   },
   "components": {
     "schemas": {
+      "Book": {
+        "type": "object",
+        "required": [
+          "id",
+          "authorId",
+          "title",
+          "publicationDate"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "b1"
+          },
+          "authorId": {
+            "type": "string",
+            "example": "a1"
+          },
+          "title": {
+            "type": "string",
+            "example": "Pride and Prejudice"
+          },
+          "publicationDate": {
+            "type": "string",
+            "format": "date",
+            "example": "1813-01-28"
+          }
+        }
+      },
       "Author": {
         "type": "object",
         "required": [
